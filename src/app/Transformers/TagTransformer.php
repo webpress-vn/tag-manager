@@ -5,10 +5,15 @@ namespace VCComponent\Laravel\Tag\Transformers;
 use App\Entities\Post;
 use App\Transformers\PostTransformer;
 use League\Fractal\TransformerAbstract;
+use VCComponent\Laravel\Product\Transformers\ProductTransformer;
 use VCComponent\Laravel\Tag\Entities\Tag;
 
 class TagTransformer extends TransformerAbstract
 {
+    protected $availableIncludes = [
+        'posts',
+        'products',
+    ];
 
     public function __construct($includes = [])
     {
@@ -29,8 +34,12 @@ class TagTransformer extends TransformerAbstract
         ];
     }
 
-    public function includePost(Post $model)
+    public function includePosts(Post $model)
     {
-        return $this->collection($model->images, new PostTransformer());
+        return $this->collection($model->Posts, new PostTransformer());
+    }
+    public function includeProducts(Post $model)
+    {
+        return $this->collection($model->products, new ProductTransformer());
     }
 }

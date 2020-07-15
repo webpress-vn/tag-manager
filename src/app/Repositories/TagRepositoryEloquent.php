@@ -20,7 +20,11 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
      */
     public function model()
     {
-        return Tag::class;
+        if (isset(config('tag.models')['tag'])) {
+            return config('tag.models.tag');
+        } else {
+            return Tag::class;
+        }
     }
 
     public function getEntity()

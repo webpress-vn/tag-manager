@@ -16,8 +16,15 @@ class TagController extends ApiController
     public function __construct(TagRepository $repository, TagValidator $validator, Request $request)
     {
         $this->repository = $repository;
-        $this->entity = $repository->getEntity();
-        $this->validator = $validator;
+        $this->entity     = $repository->getEntity();
+        $this->validator  = $validator;
+        if (config('tag.auth_middleware.admin.middleware') !== '') {
+            $this->middleware(
+                config('tag.auth_middleware.admin.middleware'),
+                ['except' => config('tag.auth_middleware.admin.except')]
+            );
+        }
+
         $this->transformer = TagTransformer::class;
     }
 
@@ -25,17 +32,16 @@ class TagController extends ApiController
     {
         $query = $this->entity;
 
-        $query = $this->applyConstraintsFromRequest($query, $request);
-        $query = $this->applySearchFromRequest($query, ['name'], $request);
-        $query = $this->applyOrderByFromRequest($query, $request);
+        $query    = $this->applyConstraintsFromRequest($query, $request);
+        $query    = $this->applySearchFromRequest($query, ['name'], $request);
+        $query    = $this->applyOrderByFromRequest($query, $request);
         $per_page = $request->has('per_page') ? (int) $request->get('per_page') : 15;
-        $tags = $query->paginate($per_page);
+        $tags     = $query->paginate($per_page);
 
         return $this->response->paginator($tags, new $this->transformer());
     }
 
-    function list(Request $request)
-    {
+    function list(Request $request) {
         $query = $this->entity;
 
         $query = $this->applyConstraintsFromRequest($query, $request);

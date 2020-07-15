@@ -10,6 +10,7 @@ class Tag extends Model
 {
     use Sluggable, SluggableScopeHelpers;
     protected $fillable = [
+        'id',
         'name',
         'status',
     ];

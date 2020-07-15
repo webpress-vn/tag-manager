@@ -2,6 +2,7 @@
 
 namespace VCComponent\Laravel\Tag\Http\Controllers\Api\Admin;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use VCComponent\Laravel\Tag\Events\TagCreatedByAdminEvent;
@@ -19,15 +20,26 @@ class TagController extends ApiController
     protected $validator;
     public function __construct(TagRepository $repository, TagValidator $validator)
     {
-        $this->repository  = $repository;
-        $this->entity      = $repository->getEntity();
-        $this->validator   = $validator;
-        $this->transformer = TagTransformer::class;
+        $this->repository = $repository;
+        $this->entity     = $repository->getEntity();
+        $this->validator  = $validator;
+        if (config('tag.auth_middleware.admin.middleware') !== '') {
+            $this->middleware(
+                config('tag.auth_middleware.admin.middleware'),
+                ['except' => config('tag.auth_middleware.admin.except')]
+            );
+        }
+        if (isset(config('tag.transformers')['tag'])) {
+            $this->transformer = config('tag.transformers.tag');
+        } else {
+            $this->transformer = TagTransformer::class;
+        }
+
     }
     public function index(Request $request)
     {
-        $query = $this->entity;
-
+        $query    = $this->entity;
+        $query    = $this->getStatus($request, $query);
         $query    = $this->applyConstraintsFromRequest($query, $request);
         $query    = $this->applySearchFromRequest($query, ['name'], $request);
         $query    = $this->applyOrderByFromRequest($query, $request);
@@ -60,7 +72,7 @@ class TagController extends ApiController
     }
     function list(Request $request) {
         $query = $this->entity;
-
+        $query = $this->getStatus($request, $query);
         $query = $this->applyConstraintsFromRequest($query, $request);
         $query = $this->applySearchFromRequest($query, ['name'], $request);
         $query = $this->applyOrderByFromRequest($query, $request);
@@ -109,5 +121,20 @@ class TagController extends ApiController
     {
         $this->repository->updateStatus($request, $id);
         return $this->success();
+    }
+    public function getStatus($request, $query)
+    {
+
+        if ($request->has('status')) {
+            $pattern = '/^\d$/';
+
+            if (!preg_match($pattern, $request->status)) {
+                throw new Exception('The input status is incorrect');
+            }
+
+            $query = $query->where('status', $request->status);
+        }
+
+        return $query;
     }
 }
