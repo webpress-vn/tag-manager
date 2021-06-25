@@ -58,7 +58,7 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
             throw new NotFoundException("tag");
         }
 
-        $result = $this->whereIn("id", $request->id)->update(['status' => $data['status']]);
+        $result = $this->model->whereIn("id", $request->id)->update(['status' => $data['status']]);
 
         return $result;
     }
