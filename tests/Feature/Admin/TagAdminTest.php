@@ -16,35 +16,45 @@ class TagAdminTest extends TestCase
      */
     public function should_create_tag_admin()
     {
+        $data = factory(Tag::class)->make(['name' => ''])->toArray();
+        $response = $this->json('POST', 'api/admin/tags', $data);
+        $this->assertValidation($response, 'name', "The name field is required.");
+
         $data = factory(Tag::class)->make()->toArray();
         $response = $this->json('POST', 'api/admin/tags', $data);
         $response->assertStatus(200);
         $response->assertJson(['data' => $data]);
-
         $this->assertDatabaseHas('tags', $data);
+
+        $response = $this->json('POST', 'api/admin/tags', $data);
+        $this->assertValidation($response, 'name', "The name has already been taken.");
+
     }
     /**
      * @test
      */
     public function should_update_tag_admin()
     {
+        factory(Tag::class)->create(['name' => 'test tag']);
+
         $tag = factory(Tag::class)->make();
         $tag->save();
-
         unset($tag['updated_at']);
         unset($tag['created_at']);
-
         $id          = $tag->id;
-        $tag->name = 'name update';
-        $tag->status = 2;
+        $tag->name = 'test tag';
         $data        = $tag->toArray();
-
         $response = $this->json('PUT', 'api/admin/tags/' . $id, $data);
+        $this->assertValidation($response, 'name', "The name has already been taken.");
 
+
+        $tag->name = 'update tag';
+        $tag->status = 3;
+        $data        = $tag->toArray();
+        $response = $this->json('PUT', 'api/admin/tags/' . $id, $data);
         $response->assertStatus(200);
         $response->assertJson([
             'data' => [
-                'status' => $data['status'],
                 'name' => $data['name'],
             ],
         ]);
@@ -161,6 +171,7 @@ class TagAdminTest extends TestCase
         $data    = ['id' => $listIds, 'status' => 2];
 
         $response = $this->json('GET', 'api/admin/tags/all');
+
         $response->assertJsonFragment(['status' => 1]);
 
         $response = $this->json('PUT', 'api/admin/tags/status/bulk', $data);

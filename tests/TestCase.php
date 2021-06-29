@@ -103,4 +103,16 @@ class TestCase extends OrchestraTestCase
         ]);
 
     }
+    public function assertValidation($response, $field, $error_message)
+    {
+        $response->assertStatus(422);
+        $response->assertJson([
+            'message' => 'The given data was invalid.',
+            "errors"  => [
+                $field => [
+                    $error_message,
+                ],
+            ],
+        ]);
+    }
 }
