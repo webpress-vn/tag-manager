@@ -3,9 +3,8 @@
 namespace VCComponent\Laravel\Tag\Test\Feature\Admin;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use VCComponent\Laravel\Tag\Test\TestCase;
 use VCComponent\Laravel\Tag\Entities\Tag;
-
+use VCComponent\Laravel\Tag\Test\TestCase;
 
 class TagAdminTest extends TestCase
 {
@@ -37,31 +36,32 @@ class TagAdminTest extends TestCase
     {
         factory(Tag::class)->create(['name' => 'test tag']);
 
-        $tag = factory(Tag::class)->make();
+        $tag = factory(Tag::class)->make(['slug' => 'tag-slug']);
         $tag->save();
         unset($tag['updated_at']);
         unset($tag['created_at']);
-        $id          = $tag->id;
+        $id = $tag->id;
         $tag->name = 'test tag';
-        $data        = $tag->toArray();
+        $data = $tag->toArray();
         $response = $this->json('PUT', 'api/admin/tags/' . $id, $data);
         $this->assertValidation($response, 'name', "The name has already been taken.");
 
-
         $tag->name = 'update tag';
         $tag->status = 3;
-        $data        = $tag->toArray();
+        $tag->slug = 'update-slug';
+        $data = $tag->toArray();
         $response = $this->json('PUT', 'api/admin/tags/' . $id, $data);
         $response->assertStatus(200);
         $response->assertJson([
             'data' => [
                 'name' => $data['name'],
+                'slug' => 'tag-slug',
             ],
         ]);
-
+        unset($data['slug']);
         $this->assertDatabaseHas('tags', $data);
     }
-          /**
+    /**
      * @test
      */
     public function should_soft_delete_tag_admin()
@@ -102,7 +102,7 @@ class TagAdminTest extends TestCase
             $this->assertDatabaseHas('tags', $item);
         }
     }
-     /**
+    /**
      * @test
      */
     public function should_get_tag_item_admin()
@@ -117,7 +117,7 @@ class TagAdminTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson([
             'data' => [
-                'name'       => $tag->name,
+                'name' => $tag->name,
                 'status' => $tag->status,
             ],
         ]);
@@ -152,7 +152,7 @@ class TagAdminTest extends TestCase
             ],
         ]);
     }
-     /**
+    /**
      * @test
      */
 
@@ -168,7 +168,7 @@ class TagAdminTest extends TestCase
 
         $listIds = array_column($tags, 'id');
 
-        $data    = ['id' => $listIds, 'status' => 2];
+        $data = ['id' => $listIds, 'status' => 2];
 
         $response = $this->json('GET', 'api/admin/tags/all');
 
@@ -193,7 +193,7 @@ class TagAdminTest extends TestCase
 
         $this->assertDatabaseHas('tags', $tag);
 
-        $data     = ['status' => 2];
+        $data = ['status' => 2];
         $response = $this->json('PUT', 'api/admin/tags/status/' . $tag['id'], $data);
         $response->assertStatus(200);
         $response->assertJson(['success' => true]);
@@ -203,8 +203,5 @@ class TagAdminTest extends TestCase
         $response->assertJson(['data' => $data]);
 
     }
-
-
-
 
 }
