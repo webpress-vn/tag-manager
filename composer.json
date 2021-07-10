@@ -1,12 +1,10 @@
 {
     "name": "webpress/tag-manager",
     "description": "Webpress tag manager",
-    "authors": [
-        {
-            "name": "sonhaichu",
-            "email": "sonhaichu@gmail.com"
-        }
-    ],
+    "authors": [{
+        "name": "sonhaichu",
+        "email": "sonhaichu@gmail.com"
+    }],
     "autoload": {
         "classmap": ["src/app/"],
         "psr-4": {
