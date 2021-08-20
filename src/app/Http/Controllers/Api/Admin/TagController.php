@@ -29,6 +29,9 @@ class TagController extends ApiController
                 ['except' => config('tag.auth_middleware.admin.except')]
             );
         }
+        else{
+            throw new Exception("Admin middleware configuration is required");
+        }
         if (isset(config('tag.transformers')['tag'])) {
             $this->transformer = config('tag.transformers.tag');
         } else {
