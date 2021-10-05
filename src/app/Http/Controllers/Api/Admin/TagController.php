@@ -21,15 +21,14 @@ class TagController extends ApiController
     public function __construct(TagRepository $repository, TagValidator $validator)
     {
         $this->repository = $repository;
-        $this->entity     = $repository->getEntity();
-        $this->validator  = $validator;
+        $this->entity = $repository->getEntity();
+        $this->validator = $validator;
         if (config('tag.auth_middleware.admin.middleware') !== '') {
             $this->middleware(
                 config('tag.auth_middleware.admin.middleware'),
                 ['except' => config('tag.auth_middleware.admin.except')]
             );
-        }
-        else{
+        } else {
             throw new Exception("Admin middleware configuration is required");
         }
         if (isset(config('tag.transformers')['tag'])) {
@@ -41,13 +40,13 @@ class TagController extends ApiController
     }
     public function index(Request $request)
     {
-        $query    = $this->entity;
-        $query    = $this->getStatus($request, $query);
-        $query    = $this->applyConstraintsFromRequest($query, $request);
-        $query    = $this->applySearchFromRequest($query, ['name'], $request);
-        $query    = $this->applyOrderByFromRequest($query, $request);
+        $query = $this->entity;
+        $query = $this->getStatus($request, $query);
+        $query = $this->applyConstraintsFromRequest($query, $request);
+        $query = $this->applySearchFromRequest($query, ['name'], $request);
+        $query = $this->applyOrderByFromRequest($query, $request);
         $per_page = $request->has('per_page') ? (int) $request->get('per_page') : 15;
-        $tags     = $query->paginate($per_page);
+        $tags = $query->paginate($per_page);
 
         return $this->response->paginator($tags, new $this->transformer());
     }
@@ -55,7 +54,7 @@ class TagController extends ApiController
     {
         $this->validator->isValid($request, 'RULE_CREATE');
         $data = $request->all();
-        $tag  = $this->repository->create($data);
+        $tag = $this->repository->create($data);
 
         event(new TagCreatedByAdminEvent($tag));
 
@@ -94,7 +93,7 @@ class TagController extends ApiController
             ],
         ]);
         $data = $request->all();
-        $tag  = $this->repository->update($data, $id);
+        $tag = $this->repository->update($data, $id);
 
         event(new TagUpdatedByAdminEvent($tag));
 

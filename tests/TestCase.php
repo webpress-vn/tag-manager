@@ -1,11 +1,11 @@
 <?php
 
 namespace VCComponent\Laravel\Tag\Test;
-use Cviebrock\EloquentSluggable\ServiceProvider;
 
+use Cviebrock\EloquentSluggable\ServiceProvider;
+use Dingo\Api\Provider\LaravelServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use VCComponent\Laravel\Tag\Providers\TagServiceProvider;
-use Dingo\Api\Provider\LaravelServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
@@ -46,9 +46,9 @@ class TestCase extends OrchestraTestCase
         $app['config']->set('app.key', 'base64:TEQ1o2POo+3dUuWXamjwGSBx/fsso+viCCg9iFaXNUA=');
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
         $app['config']->set('tag.namespace', 'tag-management');
         $app['config']->set('tag.models', [
@@ -57,47 +57,39 @@ class TestCase extends OrchestraTestCase
         $app['config']->set('tag.transformers', [
             'tag' => \VCComponent\Laravel\Tag\Transformers\TagTransformer::class,
         ]);
-        $app['config']->set('tag.auth_middleware', [
-            'admin'    => [
-                'middleware' => ''
-            ],
-            'frontend' => [
-                'middleware' => ''
-            ],
-        ]);
         $app['config']->set('api', [
-            'standardsTree'      => 'x',
-            'subtype'            => '',
-            'version'            => 'v1',
-            'prefix'             => 'api',
-            'domain'             => null,
-            'name'               => null,
+            'standardsTree' => 'x',
+            'subtype' => '',
+            'version' => 'v1',
+            'prefix' => 'api',
+            'domain' => null,
+            'name' => null,
             'conditionalRequest' => true,
-            'strict'             => false,
-            'debug'              => true,
-            'errorFormat'        => [
-                'message'     => ':message',
-                'errors'      => ':errors',
-                'code'        => ':code',
+            'strict' => false,
+            'debug' => true,
+            'errorFormat' => [
+                'message' => ':message',
+                'errors' => ':errors',
+                'code' => ':code',
                 'status_code' => ':status_code',
-                'debug'       => ':debug',
+                'debug' => ':debug',
             ],
-            'middleware'         => [
+            'middleware' => [
             ],
-            'auth'               => [
+            'auth' => [
             ],
-            'throttling'         => [
+            'throttling' => [
             ],
-            'transformer'        => \Dingo\Api\Transformer\Adapter\Fractal::class,
-            'defaultFormat'      => 'json',
-            'formats'            => [
+            'transformer' => \Dingo\Api\Transformer\Adapter\Fractal::class,
+            'defaultFormat' => 'json',
+            'formats' => [
                 'json' => \Dingo\Api\Http\Response\Format\Json::class,
             ],
-            'formatsOptions'     => [
+            'formatsOptions' => [
                 'json' => [
                     'pretty_print' => false,
                     'indent_style' => 'space',
-                    'indent_size'  => 2,
+                    'indent_size' => 2,
                 ],
             ],
         ]);
@@ -108,7 +100,7 @@ class TestCase extends OrchestraTestCase
         $response->assertStatus(422);
         $response->assertJson([
             'message' => 'The given data was invalid.',
-            "errors"  => [
+            "errors" => [
                 $field => [
                     $error_message,
                 ],
