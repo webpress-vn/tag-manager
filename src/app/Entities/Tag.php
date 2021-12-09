@@ -30,4 +30,9 @@ class Tag extends Model
     {
         return $this->morphedByMany('App\Entities\Product', 'taggable');
     }
+
+    public function taggables() 
+    {
+        return $this->hasMany(Taggables::class);
+    }
 }

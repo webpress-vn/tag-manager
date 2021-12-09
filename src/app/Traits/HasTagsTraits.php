@@ -38,4 +38,19 @@ trait HasTagsTraits
     {
         $this->tags()->sync($tag_id);
     }
+
+    public function scopeOfTagBySlug($query, $slug)
+    {
+        return $query->whereHas('tags', function ($q) use ($slug) {
+            $q->where('slug', $slug)->where('status', 1);
+        });
+    }
+
+    public function scopeOfTagsBySlug($query, $slugs)
+    {
+        return $query->whereHas('tags', function ($q) use ($slugs) {
+            $q->whereIn('slug', $slugs)->where('status', 1);
+        });
+    }
+
 }
