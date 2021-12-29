@@ -2,6 +2,7 @@
 
 namespace VCComponent\Laravel\Tag\Repositories;
 
+use Exception;
 use Prettus\Repository\Criteria\RequestCriteria;
 use Prettus\Repository\Eloquent\BaseRepository;
 use VCComponent\Laravel\Tag\Entities\Tag;
@@ -69,5 +70,58 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    public function getListTags($number = null)
+    {
+        try {
+            $query = $this->model->where('status', 1)
+                ->orderBy('created_at', 'desc');
+            if (!is_null($number)) {
+                return $query->limit($number)->get();
+            }
+            return $query->get();
+
+        } catch (Exception $e) {
+            throw new NotFoundException($e);
+        }
+    }
+    public function getListPaginatedTags($per_page)
+    {
+        try {
+            $query = $this->model->where('status', 1)
+            ->orderBy('created_at', 'desc');
+            return $query->paginate($per_page);
+        } catch (Exception $e) {
+            throw new NotFoundException($e);
+        }
+    }
+
+    public function getListTranslatableTags($type = null, $number = null)
+    {
+        try {
+            $query = $this->model->where('status', 1)
+                ->with('languages')
+                ->orderBy('created_at', 'desc');
+            if (!is_null($number)) {
+                return $query->limit($number)->get();
+            }
+            return $query->get();
+
+        } catch (Exception $e) {
+            throw new NotFoundException($e);
+        }
+    }
+    public function getListPaginatedTranslatableTags($type = null, $per_page)
+    {
+        try {
+            $query = $this->model->where('status', 1)
+                ->with('languages')
+                ->orderBy('created_at', 'desc');
+            return $query->paginate($per_page);
+
+        } catch (Exception $e) {
+            throw new NotFoundException($e);
+        }
     }
 }
