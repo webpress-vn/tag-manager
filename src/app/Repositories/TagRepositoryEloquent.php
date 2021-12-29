@@ -97,7 +97,7 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
         }
     }
 
-    public function getListTranslatableTags($type = null, $number = null)
+    public function getListTranslatableTags($number = null)
     {
         try {
             $query = $this->model->where('status', 1)
@@ -112,7 +112,7 @@ class TagRepositoryEloquent extends BaseRepository implements TagRepository
             throw new NotFoundException($e);
         }
     }
-    public function getListPaginatedTranslatableTags($type = null, $per_page)
+    public function getListPaginatedTranslatableTags($per_page)
     {
         try {
             $query = $this->model->where('status', 1)

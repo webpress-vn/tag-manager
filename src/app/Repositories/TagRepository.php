@@ -14,6 +14,6 @@ interface TagRepository extends RepositoryInterface
     public function getListTags($number = null);
     public function getListPaginatedTags($per_page);
 
-    public function getListTranslatableTags($type = null,$number = null);
-    public function getListPaginatedTranslatableTags($type = null,$per_page);
+    public function getListTranslatableTags($number = null);
+    public function getListPaginatedTranslatableTags($per_page);
 }
