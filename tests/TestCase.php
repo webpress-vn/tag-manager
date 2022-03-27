@@ -99,7 +99,6 @@ class TestCase extends OrchestraTestCase
     {
         $response->assertStatus(422);
         $response->assertJson([
-            'message' => 'The given data was invalid.',
             "errors" => [
                 $field => [
                     $error_message,

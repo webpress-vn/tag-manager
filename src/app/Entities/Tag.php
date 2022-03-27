@@ -14,7 +14,7 @@ class Tag extends Model
         'name',
         'status',
     ];
-    public function sluggable()
+    public function sluggable():array
     {
         return [
             'slug' => [

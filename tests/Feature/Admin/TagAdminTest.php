@@ -75,7 +75,7 @@ class TagAdminTest extends TestCase
         $response = $this->call('DELETE', 'api/admin/tags/' . $tag['id']);
         $response->assertStatus(200);
         $response->assertJson(['success' => true]);
-        $this->assertDeleted('tags', $tag);
+        $this->assertDatabaseMissing('tags', $tag);
 
     }
     /**
