@@ -17,7 +17,7 @@
         }
     },
     "require": {
-        "webpress/core": "^9.0",
+        "webpress/core": "dev-dev/v9.0",
         "cviebrock/eloquent-sluggable": "^9.0"
     },
     "require-dev": {
